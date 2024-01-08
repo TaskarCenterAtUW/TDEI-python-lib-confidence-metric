@@ -24,15 +24,11 @@ class OSMDataHandler:
         else:
             return None
         id = item.get('osmid')
-        print('------', id)
 
         if item_type == 'node':
-            print('------------ node')
             return self.api.NodeHistory(id)
         elif item_type == 'way':
-            print('------------ way')
             return self.api.WayHistory(id)
         elif item_type == 'relation':
-            print('------------ relation')
             return self.api.RelationHistory(id)
         return None
