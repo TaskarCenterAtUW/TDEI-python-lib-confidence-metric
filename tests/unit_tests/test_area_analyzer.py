@@ -30,14 +30,6 @@ class TestAreaAnalyzer(unittest.TestCase):
         self.mock_trust_score_handler = MagicMock()
         self.area_analyzer = AreaAnalyzer(osm_data_handler=self.mock_osm_data_handler)
         self.PROJ = 'epsg:26910'
-        # self.area_analyzer.trust_score = TrustScoreAnalyzer(
-        #     sidewalk='["highway"~"footway|steps|living_street|path"]',
-        #     osm_data_handler=self.mock_osm_data_handler,
-        #     date=datetime.now(),
-        #     proj='epsg:26910'
-        # )
-        # self.area_analyzer.trust_score.get_measures_from_polygon = MagicMock()
-        # self.area_analyzer.trust_score.get_measures_from_polygon.return_value = self.mock_measures
 
     @patch('geonetworkx.graph_edges_to_gdf')
     @patch('shapely.ops.voronoi_diagram')
@@ -97,19 +89,31 @@ class TestAreaAnalyzer(unittest.TestCase):
         )
         self.assertIsNotNone(self.area_analyzer.gdf)
 
-    @patch.object(TrustScoreAnalyzer, 'get_measures_from_polygon', return_value=MagicMock())
+    @patch.object(TrustScoreAnalyzer, 'get_measures_from_polygon', return_value={'direct_trust_score': 0.5, 'time_trust_score': 0.7, 'indirect_values': {'some_key': 'some_value'}})
     def test_process_feature(self, mock_get_measures_from_polygon):
         # Create a valid GeoDataFrame with Polygon geometries for testing
-        data = {'geometry': [Polygon([(0, 0), (1, 1), (1, 0)])]}
+        coords = [
+            (-122.32020611852897, 47.6195210148756),
+            (-122.32021005772235, 47.620102439817686),
+            (-122.3192147446495, 47.62007823266089),
+            (-122.31924141598212, 47.61904150994083),
+            (-122.32020611852897, 47.6195210148756)
+        ]
+        poly = Polygon(coords)
+        data = {
+            'geometry': [poly],
+            'direct_confirmations': None,
+            'direct_trust_score': None,
+            'time_trust_score': None,
+            'indirect_values': None
+        }
         gdf = gpd.GeoDataFrame(data, crs=self.PROJ)
 
         # Test the method
-        result = self.area_analyzer._process_feature(gdf)
+        result = self.area_analyzer._process_feature(gdf.iloc[0])
 
         # Assert calls and results
-        mock_get_measures_from_polygon.assert_called_once()
-        self.assertIsInstance(result, gpd.GeoDataFrame)
-        self.assertTrue(result['geometry'].apply(lambda x: x.geom_type in ['Polygon', 'MultiPolygon']).any())
+        mock_get_measures_from_polygon.assert_called_once_with(polygon=poly)
 
     @patch.object(AreaAnalyzer, '_process_feature', return_value=MagicMock())
     @patch.object(AreaAnalyzer, '_create_tiling_if_needed', return_value=MagicMock())

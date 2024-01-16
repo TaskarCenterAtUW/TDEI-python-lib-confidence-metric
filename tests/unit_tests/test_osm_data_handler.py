@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch, Mock, MagicMock
+from unittest.mock import patch, MagicMock
 from src.python_confidence_metric.osm_data_handler import OSMDataHandler
 
 
@@ -40,7 +40,7 @@ class TestOSMDataHandler(unittest.TestCase):
         bounding_params = [0, 1, 2, 3]
         handler = OSMDataHandler()
         result = handler.get_map_data(bounding_params=bounding_params)
-        self.mock_osm_api.Map.assert_called_once
+        self.mock_osm_api.Map.assert_called_once()
         self.assertEqual(result, 'Mocked Map Data')
 
     def test_get_item_history_node(self):

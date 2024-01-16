@@ -1,7 +1,6 @@
 # utils.py file
 
 import osmnx as ox
-import pandas as pd
 import geopandas as gpd
 import geonetworkx as gnx
 from statistics import mean
@@ -19,8 +18,8 @@ def compute_feature_indirect_trust(feature, thresholds):
         int: 1 if the indirect trust score is above the threshold, 0 otherwise.
     """
     indirect_trust_score = 0
-    item_name_array = ['road_time', 'road_users', 'road_time', 'poi_count', 'poi_users', 'poi_time', 'bldg_count',
-                       'bldg_count', 'bldg_users', 'bldg_time']
+    item_name_array = ['road_users', 'road_time', 'poi_count', 'poi_users', 'poi_time', 'bldg_count', 'bldg_users',
+                       'bldg_time']
     for item_name in item_name_array:
         if feature.indirect_values is not None and feature.indirect_values[item_name] is not None and \
           feature.indirect_values[item_name] >= thresholds[item_name]:
@@ -338,26 +337,3 @@ def calculate_feature_trust_scores(feature, versions_threshold, direct_confirm_t
     feature.time_trust_score = int(feature['days_since_last_edit'] > days_since_last_edit_threshold)
 
     return feature
-
-
-def calculate_indirect_trust_score(feature, thresholds):
-    """
-    Calculate the indirect trust score for a given feature based on threshold values.
-
-    Args:
-        feature (dict): The feature for which the score is being calculated.
-        thresholds (dict): Threshold values for different trust score parameters.
-
-    Returns:
-        int: The indirect trust score.
-    """
-    indirect_trust_score = 0
-    item_name_array = ['road_time', 'road_users', 'road_time', 'poi_count', 'poi_users',
-                       'poi_time', 'bldg_count', 'bldg_count', 'bldg_users', 'bldg_time']
-
-    for item_name in item_name_array:
-        if feature.indirect_values and feature.indirect_values.get(item_name) and \
-          feature.indirect_values[item_name] >= thresholds[item_name]:
-            indirect_trust_score += 1
-
-    return int(indirect_trust_score > 2)

@@ -8,6 +8,7 @@ import geonetworkx as gnx
 from datetime import datetime
 from shapely.ops import voronoi_diagram
 from .osm_data_handler import OSMDataHandler
+from shapely.geometry import Polygon, MultiPolygon
 from .trust_score_calculator import TrustScoreAnalyzer
 from .utils import compute_feature_indirect_trust, calculate_overall_trust_score
 
@@ -111,7 +112,8 @@ class AreaAnalyzer:
 
     def _process_feature(self, feature):
         poly = feature.geometry
-        if (poly.geom_type == 'Polygon').any() or (poly.geom_type == 'MultiPolygon').any():
+        if isinstance(poly, Polygon) or isinstance(poly, MultiPolygon):
+            print('-----11111111')
             measures = self.trust_score.get_measures_from_polygon(polygon=poly)
             feature['direct_trust_score'] = measures['direct_trust_score']
             feature['time_trust_score'] = measures['time_trust_score']
