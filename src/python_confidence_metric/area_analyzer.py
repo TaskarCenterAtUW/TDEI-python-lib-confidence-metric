@@ -9,7 +9,6 @@ from datetime import datetime
 from shapely.ops import voronoi_diagram
 from .osm_data_handler import OSMDataHandler
 from .trust_score_calculator import TrustScoreAnalyzer
-from .geometry_processor import GeometryProcessor
 from .utils import compute_feature_indirect_trust, calculate_overall_trust_score
 
 
@@ -40,7 +39,6 @@ class AreaAnalyzer:
         self.PROJ = 'epsg:26910'
         self.SIDEWALK_FILTER = '["highway"~"footway|steps|living_street|path"]'
         self.osm_data_handler = osm_data_handler
-        self.geometry_processor = GeometryProcessor(proj=self.PROJ)
         self.trust_score = TrustScoreAnalyzer(
             sidewalk=self.SIDEWALK_FILTER,
             osm_data_handler=self.osm_data_handler,
@@ -50,11 +48,19 @@ class AreaAnalyzer:
         self.gdf = None
 
     def calculate_area_confidence_score(self, file_path):
+        # Read the GeoDataFrame from the file
         self.gdf = gpd.read_file(file_path)
+
+        # Check if tiling is needed and create tiling if necessary
         self._create_tiling_if_needed()
+
+        # Initialize columns
         self.gdf = _initialize_columns(gdf=self.gdf)
+
+        # Convert to Dask GeoDataFrame
         df_dask = dask_geopandas.from_geopandas(self.gdf, npartitions=16, name='measures')
 
+        # Apply processing to each feature
         output = df_dask.apply(
             self._process_feature,
             axis=1,
@@ -70,14 +76,17 @@ class AreaAnalyzer:
             )
         ).compute(scheduler='multiprocessing')
 
+        # Calculate threshold values
         threshold_values = _get_threshold_values(gdf=output)
 
+        # Calculate indirect trust scores and overall trust scores for each feature
         output['indirect_trust_score'] = output.apply(lambda x: compute_feature_indirect_trust(
             feature=x,
             thresholds=threshold_values
         ), axis=1)
         output['trust_score'] = output.apply(lambda x: calculate_overall_trust_score(feature=x), axis=1)
 
+        # Calculate the mean trust score
         mean_trust_score = output['trust_score'].mean()
         return mean_trust_score
 
@@ -102,7 +111,7 @@ class AreaAnalyzer:
 
     def _process_feature(self, feature):
         poly = feature.geometry
-        if poly.geom_type in ['Polygon', 'MultiPolygon']:
+        if (poly.geom_type == 'Polygon').any() or (poly.geom_type == 'MultiPolygon').any():
             measures = self.trust_score.get_measures_from_polygon(polygon=poly)
             feature['direct_trust_score'] = measures['direct_trust_score']
             feature['time_trust_score'] = measures['time_trust_score']
