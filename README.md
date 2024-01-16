@@ -79,10 +79,59 @@ test_get_map_data (test_osm_data_handler.TestOSMDataHandler.test_get_map_data) .
 test_get_way_history (test_osm_data_handler.TestOSMDataHandler.test_get_way_history) ... ok
 test_get_way_history_valid_osmid (test_osm_data_handler.TestOSMDataHandler.test_get_way_history_valid_osmid) ... ok
 test_initialization_with_credentials (test_osm_data_handler.TestOSMDataHandler.test_initialization_with_credentials) ... ok
+test_all_data_after_cutoff (test_trust_score_calculator.TestTrustScoreAnalyzer.test_all_data_after_cutoff) ... ok
+test_all_data_before_cutoff (test_trust_score_calculator.TestTrustScoreAnalyzer.test_all_data_before_cutoff) ... ok
+test_analyze_sidewalk_features (test_trust_score_calculator.TestTrustScoreAnalyzer.test_analyze_sidewalk_features) ... ok
+test_analyze_sidewalk_features_non_empty_graph (test_trust_score_calculator.TestTrustScoreAnalyzer.test_analyze_sidewalk_features_non_empty_graph) ... ok
+test_calculate_statistics_for_edge (test_trust_score_calculator.TestTrustScoreAnalyzer.test_calculate_statistics_for_edge) ... ok
+test_compute_edge_statistics (test_trust_score_calculator.TestTrustScoreAnalyzer.test_compute_edge_statistics) ... ok
+test_data_before_and_after_cutoff (test_trust_score_calculator.TestTrustScoreAnalyzer.test_data_before_and_after_cutoff) ... ok
+test_empty_historical_info (test_trust_score_calculator.TestTrustScoreAnalyzer.test_empty_historical_info) ... ok
+test_get_measures_from_polygon_empty_graph (test_trust_score_calculator.TestTrustScoreAnalyzer.test_get_measures_from_polygon_empty_graph) ... ok
+test_aggregate_feature_statistics (test_utils.TestUtils.test_aggregate_feature_statistics) ... ok
+test_aggregate_feature_statistics_with_incomplete_dataset (test_utils.TestUtils.test_aggregate_feature_statistics_with_incomplete_dataset) ... ok
+test_calculate_days_since_last_edit_current_date (test_utils.TestUtils.test_calculate_days_since_last_edit_current_date) ... ok
+test_calculate_days_since_last_edit_for_empty_historical_info (test_utils.TestUtils.test_calculate_days_since_last_edit_for_empty_historical_info) ... ok
+test_calculate_days_since_last_edit_multiple_dates (test_utils.TestUtils.test_calculate_days_since_last_edit_multiple_dates) ... ok
+test_calculate_days_since_last_edit_single_date (test_utils.TestUtils.test_calculate_days_since_last_edit_single_date) ... ok
+test_calculate_direct_confirmations (test_utils.TestUtils.test_calculate_direct_confirmations) ... ok
+test_calculate_direct_confirmations_sith_single_entry (test_utils.TestUtils.test_calculate_direct_confirmations_sith_single_entry) ... ok
+test_calculate_feature_trust_scores (test_utils.TestUtils.test_calculate_feature_trust_scores) ... ok
+test_calculate_feature_trust_scores_where_no_thresholds_met (test_utils.TestUtils.test_calculate_feature_trust_scores_where_no_thresholds_met) ... ok
+test_calculate_indirect_trust_components_from_polygon (test_utils.TestUtils.test_calculate_indirect_trust_components_from_polygon) ... ok
+test_calculate_no_direct_confirmations (test_utils.TestUtils.test_calculate_no_direct_confirmations) ... ok
+test_calculate_number_users_edited_for_duplicate_users (test_utils.TestUtils.test_calculate_number_users_edited_for_duplicate_users) ... ok
+test_calculate_number_users_edited_for_empty_info (test_utils.TestUtils.test_calculate_number_users_edited_for_empty_info) ... ok
+test_calculate_number_users_edited_for_unique_users (test_utils.TestUtils.test_calculate_number_users_edited_for_unique_users) ... ok
+test_calculate_overall_trust_score_with_all_scores_missing (test_utils.TestUtils.test_calculate_overall_trust_score_with_all_scores_missing) ... ok
+test_calculate_overall_trust_score_with_negative_scores (test_utils.TestUtils.test_calculate_overall_trust_score_with_negative_scores) ... ok
+test_calculate_overall_trust_score_with_scores_present (test_utils.TestUtils.test_calculate_overall_trust_score_with_scores_present) ... ok
+test_calculate_overall_trust_score_with_some_scores_missing (test_utils.TestUtils.test_calculate_overall_trust_score_with_some_scores_missing) ... ok
+test_calculate_user_interaction_stats (test_utils.TestUtils.test_calculate_user_interaction_stats) ... ok
+test_check_for_rollbacks (test_utils.TestUtils.test_check_for_rollbacks) ... ok
+test_check_for_rollbacks_no_rollback (test_utils.TestUtils.test_check_for_rollbacks_no_rollback) ... ok
+test_check_for_rollbacks_with_empty_historical_info (test_utils.TestUtils.test_check_for_rollbacks_with_empty_historical_info) ... ok
+test_compute_feature_indirect_trust_with_above_thresholds (test_utils.TestUtils.test_compute_feature_indirect_trust_with_above_thresholds) ... ok
+test_compute_feature_indirect_trust_with_below_thresholds (test_utils.TestUtils.test_compute_feature_indirect_trust_with_below_thresholds) ... ok
+test_compute_feature_indirect_trust_with_missing (test_utils.TestUtils.test_compute_feature_indirect_trust_with_missing) ... ok
+test_count_tag_changes (test_utils.TestUtils.test_count_tag_changes) ... ok
+test_count_tag_changes_with_empty_historical_info (test_utils.TestUtils.test_count_tag_changes_with_empty_historical_info) ... ok
+test_count_tag_changes_with_no_change (test_utils.TestUtils.test_count_tag_changes_with_no_change) ... ok
+test_count_tags (test_utils.TestUtils.test_count_tags) ... ok
+test_count_tags_with_no_tags (test_utils.TestUtils.test_count_tags_with_no_tags) ... ok
+test_extract_features_from_polygon (test_utils.TestUtils.test_extract_features_from_polygon) ... ok
+test_extract_features_from_polygon_failure (test_utils.TestUtils.test_extract_features_from_polygon_failure) ... ok
+test_extract_road_features_from_polygon (test_utils.TestUtils.test_extract_road_features_from_polygon) ... ok
+test_extract_road_features_from_polygon_failure (test_utils.TestUtils.test_extract_road_features_from_polygon_failure) ... ok
+test_get_relevant_tags (test_utils.TestUtils.test_get_relevant_tags) ... ok
+test_get_relevant_tags_with_empty_edge (test_utils.TestUtils.test_get_relevant_tags_with_empty_edge) ... ok
+test_get_relevant_tags_with_no_relevant_tags (test_utils.TestUtils.test_get_relevant_tags_with_no_relevant_tags) ... ok
+test_get_relevant_tags_with_some_tags_missing (test_utils.TestUtils.test_get_relevant_tags_with_some_tags_missing) ... ok
 
 ----------------------------------------------------------------------
-Ran 15 tests in 0.318s
+Ran 63 tests in 1.906s
 
 OK
+
 
 ```

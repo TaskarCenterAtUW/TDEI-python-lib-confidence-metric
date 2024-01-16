@@ -113,7 +113,6 @@ class AreaAnalyzer:
     def _process_feature(self, feature):
         poly = feature.geometry
         if isinstance(poly, Polygon) or isinstance(poly, MultiPolygon):
-            print('-----11111111')
             measures = self.trust_score.get_measures_from_polygon(polygon=poly)
             feature['direct_trust_score'] = measures['direct_trust_score']
             feature['time_trust_score'] = measures['time_trust_score']
