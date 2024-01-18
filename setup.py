@@ -3,7 +3,7 @@ from setuptools import setup, find_packages, Extension
 from version import version
 
 project_path = os.path.dirname(os.path.realpath(__file__))
-requirements_file = '{}/requirements.txt'.format(project_path)
+requirements_file = '{}/requirement.txt'.format(project_path)
 
 with open(requirements_file) as f:
     content = f.readlines()
