@@ -22,7 +22,7 @@ setup(
     project_urls={
         'Documentation': 'https://github.com/TaskarCenterAtUW/TDEI-python-lib-confidence-metric/blob/main/README.md',
         'GitHub': 'https://github.com/TaskarCenterAtUW/TDEI-python-lib-confidence-metric',
-        'Changelog': 'https://github.com/TaskarCenterAtUW/TDEI-python-lib-confidence-metric/blob/develop/CHANGELOG.md'
+        'Changelog': 'https://github.com/TaskarCenterAtUW/TDEI-python-lib-confidence-metric/blob/main/CHANGELOG.md'
     },
     long_description_content_type='text/markdown',
     url='https://github.com/TaskarCenterAtUW/TDEI-python-lib-confidence-metric',
