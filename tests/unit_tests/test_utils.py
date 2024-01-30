@@ -4,7 +4,7 @@ import geopandas as gpd
 from datetime import datetime
 from shapely.geometry import Polygon, Point
 from unittest.mock import patch, MagicMock
-from src.python_confidence_metric.utils import compute_feature_indirect_trust, calculate_overall_trust_score, \
+from src.osw_confidence_metric.utils import compute_feature_indirect_trust, calculate_overall_trust_score, \
     calculate_indirect_trust_components_from_polygon, extract_features_from_polygon, extract_road_features_from_polygon, \
     aggregate_feature_statistics, calculate_user_interaction_stats, calculate_number_users_edited, \
     calculate_days_since_last_edit, calculate_direct_confirmations, get_relevant_tags, count_tag_changes, \
@@ -110,9 +110,9 @@ class TestUtils(unittest.TestCase):
         expected_score = (-0.5 * 0.5) + (-0.3 * 0.25) + (-0.2 * 0.25)
         self.assertAlmostEqual(result, expected_score)
 
-    @patch('src.python_confidence_metric.utils.extract_features_from_polygon')
-    @patch('src.python_confidence_metric.utils.extract_road_features_from_polygon')
-    @patch('src.python_confidence_metric.utils.aggregate_feature_statistics')
+    @patch('src.osw_confidence_metric.utils.extract_features_from_polygon')
+    @patch('src.osw_confidence_metric.utils.extract_road_features_from_polygon')
+    @patch('src.osw_confidence_metric.utils.aggregate_feature_statistics')
     def test_calculate_indirect_trust_components_from_polygon(self, mock_aggregate_feature_statistics,
                                                               mock_extract_road_features_from_polygon,
                                                               mock_extract_features_from_polygon):
@@ -211,8 +211,8 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(list(result.columns), expected_columns)
         self.assertTrue(result.empty)
 
-    @patch('src.python_confidence_metric.osm_data_handler.OSMDataHandler')
-    @patch('src.python_confidence_metric.utils.calculate_user_interaction_stats')
+    @patch('src.osw_confidence_metric.osm_data_handler.OSMDataHandler')
+    @patch('src.osw_confidence_metric.utils.calculate_user_interaction_stats')
     def test_aggregate_feature_statistics(self, mock_calculate_user_interaction_stats, mock_osm_data_handler):
         # Create a dummy GDF
         dummy_gdf = gpd.GeoDataFrame({'geometry': [Point(1, 1), Point(2, 2)]}, crs=self.proj)
@@ -229,8 +229,8 @@ class TestUtils(unittest.TestCase):
         expected_result = (10, 5)
         self.assertEqual(result, expected_result)
 
-    @patch('src.python_confidence_metric.osm_data_handler.OSMDataHandler')
-    @patch('src.python_confidence_metric.utils.calculate_user_interaction_stats')
+    @patch('src.osw_confidence_metric.osm_data_handler.OSMDataHandler')
+    @patch('src.osw_confidence_metric.utils.calculate_user_interaction_stats')
     def test_aggregate_feature_statistics_with_incomplete_dataset(self, mock_calculate_user_interaction_stats,
                                                                   mock_osm_data_handler):
         # Create a dummy GDF
@@ -248,8 +248,8 @@ class TestUtils(unittest.TestCase):
         expected_result = (10, 5)
         self.assertEqual(result, expected_result)
 
-    @patch('src.python_confidence_metric.utils.calculate_number_users_edited')
-    @patch('src.python_confidence_metric.utils.calculate_days_since_last_edit')
+    @patch('src.osw_confidence_metric.utils.calculate_number_users_edited')
+    @patch('src.osw_confidence_metric.utils.calculate_days_since_last_edit')
     def test_calculate_user_interaction_stats(self, mock_calculate_days_since_last_edit,
                                               mock_calculate_number_users_edited):
         # Setup mock return values
@@ -319,7 +319,7 @@ class TestUtils(unittest.TestCase):
         result = calculate_days_since_last_edit(historical_info=historical_info, date=self.date)
         self.assertEqual(result, 0)
 
-    @patch('src.python_confidence_metric.utils.get_relevant_tags')
+    @patch('src.osw_confidence_metric.utils.get_relevant_tags')
     def test_calculate_direct_confirmations(self, mock_get_relevant_tags):
         historical_info = {
             'edit1': {'user': 'user1', 'timestamp': datetime(2024, 1, 1), 'tags': 'tags1'},
@@ -330,7 +330,7 @@ class TestUtils(unittest.TestCase):
         result = calculate_direct_confirmations(historical_info=historical_info)
         self.assertEqual(result, 1)
 
-    @patch('src.python_confidence_metric.utils.get_relevant_tags')
+    @patch('src.osw_confidence_metric.utils.get_relevant_tags')
     def test_calculate_no_direct_confirmations(self, mock_get_relevant_tags):
         historical_info = {
             'edit1': {'user': 'user1', 'timestamp': datetime(2024, 1, 1), 'tags': 'tags1'},
@@ -340,7 +340,7 @@ class TestUtils(unittest.TestCase):
         result = calculate_direct_confirmations(historical_info=historical_info)
         self.assertEqual(result, 0)
 
-    @patch('src.python_confidence_metric.utils.get_relevant_tags')
+    @patch('src.osw_confidence_metric.utils.get_relevant_tags')
     def test_calculate_direct_confirmations_sith_single_entry(self, mock_get_relevant_tags):
         historical_info = {
             'edit1': {'user': 'user1', 'timestamp': datetime(2024, 1, 1), 'tags': 'tags1'}
@@ -422,7 +422,7 @@ class TestUtils(unittest.TestCase):
         self.assertIsNone(result['access'])
         self.assertIsNone(result['step_count'])
 
-    @patch('src.python_confidence_metric.utils.get_relevant_tags')
+    @patch('src.osw_confidence_metric.utils.get_relevant_tags')
     def test_count_tag_changes(self, mock_get_relevant_tags):
         # Setup mock return values for get_relevant_tags
         mock_get_relevant_tags.side_effect = [
@@ -443,7 +443,7 @@ class TestUtils(unittest.TestCase):
         result = count_tag_changes(historical_info=historical_info)
         self.assertEqual(result, 2)
 
-    @patch('src.python_confidence_metric.utils.get_relevant_tags')
+    @patch('src.osw_confidence_metric.utils.get_relevant_tags')
     def test_count_tag_changes_with_no_change(self, mock_get_relevant_tags):
         # Setup mock return values for get_relevant_tags
         mock_get_relevant_tags.side_effect = [
@@ -492,7 +492,7 @@ class TestUtils(unittest.TestCase):
         result = check_for_rollbacks(historical_info=historical_info)
         self.assertEqual(result, 0)
 
-    @patch('src.python_confidence_metric.utils.get_relevant_tags')
+    @patch('src.osw_confidence_metric.utils.get_relevant_tags')
     def test_count_tags(self, mock_get_relevant_tags):
         mock_get_relevant_tags.return_value = {'tag1': 'value1', 'tag2': 'value2', 'tag3': None}
         historical_info = {
@@ -502,7 +502,7 @@ class TestUtils(unittest.TestCase):
         result = count_tags(historical_info=historical_info)
         self.assertEqual(result, 2)
 
-    @patch('src.python_confidence_metric.utils.get_relevant_tags')
+    @patch('src.osw_confidence_metric.utils.get_relevant_tags')
     def test_count_tags_with_no_tags(self, mock_get_relevant_tags):
         mock_get_relevant_tags.return_value = {'tag1': None, 'tag2': None}
         historical_info = {

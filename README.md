@@ -18,15 +18,15 @@ This package is used to calculate the confidence score of a geojson area.
 
 ## Starting a new project with template
 
-- Add `python-osw-validation` package as dependency in your `requirements.txt`
-- or `pip install python-osw-validation`
+- Add `osw-confidence-metric` package as dependency in your `requirements.txt`
+- or `pip install osw-confidence-metric`
 - Start using the packages in your code.
 
 ## Initialize and Configuration
 
 ```python
-from python_confidence_metric.osm_data_handler import OSMDataHandler
-from python_confidence_metric.area_analyzer import AreaAnalyzer
+from osw_confidence_metrics.osm_data_handler import OSMDataHandler
+from osw_confidence_metrics.area_analyzer import AreaAnalyzer
 username = ''
 password = ''
 

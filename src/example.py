@@ -1,8 +1,8 @@
 # example.py
 import time
 
-from python_confidence_metric.osm_data_handler import OSMDataHandler
-from python_confidence_metric.area_analyzer import AreaAnalyzer
+from osw_confidence_metric.osm_data_handler import OSMDataHandler
+from osw_confidence_metric.area_analyzer import AreaAnalyzer
 username = ''
 password = ''
 
