@@ -4,7 +4,7 @@ import geopandas as gpd
 from datetime import datetime
 from unittest.mock import patch, Mock
 from shapely.geometry import Polygon, LineString
-from src.python_confidence_metric.trust_score_calculator import TrustScoreAnalyzer
+from src.osw_confidence_metric.trust_score_calculator import TrustScoreAnalyzer
 
 
 class MockOSMDataHandler:
@@ -53,8 +53,8 @@ class TestTrustScoreAnalyzer(unittest.TestCase):
         # Restore the original method
         self.trust_score_analyzer._analyze_sidewalk_features = original_graph_from_polygon
 
-    @patch('src.python_confidence_metric.trust_score_calculator._initialize_gdf_columns')
-    @patch('src.python_confidence_metric.trust_score_calculator._prepare_dask_dataframe')
+    @patch('src.osw_confidence_metric.trust_score_calculator._initialize_gdf_columns')
+    @patch('src.osw_confidence_metric.trust_score_calculator._prepare_dask_dataframe')
     @patch('geonetworkx.graph_edges_to_gdf')
     def test_analyze_sidewalk_features(self, mock_graph_edges_to_gdf, mock_prepare_dask_dataframe,
                                        mock_initialize_gdf_columns):
@@ -80,8 +80,8 @@ class TestTrustScoreAnalyzer(unittest.TestCase):
         # Check if the result matches the expected result
         self.assertEqual(result, (0, 0))
 
-    @patch('src.python_confidence_metric.trust_score_calculator._initialize_gdf_columns')
-    @patch('src.python_confidence_metric.trust_score_calculator._prepare_dask_dataframe')
+    @patch('src.osw_confidence_metric.trust_score_calculator._initialize_gdf_columns')
+    @patch('src.osw_confidence_metric.trust_score_calculator._prepare_dask_dataframe')
     @patch('geonetworkx.graph_edges_to_gdf')
     def test_analyze_sidewalk_features_non_empty_graph(self, mock_graph_edges_to_gdf, mock_prepare_dask_dataframe,
                                                        mock_initialize_gdf_columns):
@@ -110,8 +110,8 @@ class TestTrustScoreAnalyzer(unittest.TestCase):
         expected_time_trust_score = 0
         self.assertEqual(result, (expected_direct_trust_score, expected_time_trust_score))
 
-    @patch('src.python_confidence_metric.trust_score_calculator.TrustScoreAnalyzer._calculate_statistics_for_edge')
-    @patch('src.python_confidence_metric.trust_score_calculator.TrustScoreAnalyzer._filter_historical_data_by_date')
+    @patch('src.osw_confidence_metric.trust_score_calculator.TrustScoreAnalyzer._calculate_statistics_for_edge')
+    @patch('src.osw_confidence_metric.trust_score_calculator.TrustScoreAnalyzer._filter_historical_data_by_date')
     def test_compute_edge_statistics(self, mock_filter_historical_data_by_date, mock_calculate_statistics_for_edge):
         # Create a sample feature row
         sample_feature = gpd.GeoDataFrame(
@@ -149,11 +149,11 @@ class TestTrustScoreAnalyzer(unittest.TestCase):
         # Check if the mock methods were called with the expected arguments
         mock_calculate_statistics_for_edge.assert_called_once_with(historical_info=sample_historical_info)
 
-    @patch('src.python_confidence_metric.utils.calculate_user_interaction_stats')
-    @patch('src.python_confidence_metric.utils.calculate_direct_confirmations')
-    @patch('src.python_confidence_metric.utils.count_tag_changes')
-    @patch('src.python_confidence_metric.utils.check_for_rollbacks')
-    @patch('src.python_confidence_metric.utils.count_tags')
+    @patch('src.osw_confidence_metric.utils.calculate_user_interaction_stats')
+    @patch('src.osw_confidence_metric.utils.calculate_direct_confirmations')
+    @patch('src.osw_confidence_metric.utils.count_tag_changes')
+    @patch('src.osw_confidence_metric.utils.check_for_rollbacks')
+    @patch('src.osw_confidence_metric.utils.count_tags')
     def test_calculate_statistics_for_edge(self, mock_count_tags, mock_check_for_rollbacks,
                                            mock_count_tag_changes, mock_calculate_direct_confirmations,
                                            mock_calculate_user_interaction_stats):
