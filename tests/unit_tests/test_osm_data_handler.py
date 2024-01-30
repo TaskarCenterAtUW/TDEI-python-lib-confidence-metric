@@ -1,12 +1,12 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from src.python_confidence_metric.osm_data_handler import OSMDataHandler
+from src.osw_confidence_metric.osm_data_handler import OSMDataHandler
 
 
 class TestOSMDataHandler(unittest.TestCase):
 
     def setUp(self):
-        patcher = patch('src.python_confidence_metric.osm_data_handler.OsmApi')
+        patcher = patch('src.osw_confidence_metric.osm_data_handler.OsmApi')
         self.mock_osm_api_class = patcher.start()
         self.addCleanup(patcher.stop)
         self.mock_osm_api = MagicMock()

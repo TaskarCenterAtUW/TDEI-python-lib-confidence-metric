@@ -4,8 +4,8 @@ import pandas as pd
 import geopandas as gpd
 from shapely.geometry import Polygon, MultiPolygon, Point
 from unittest.mock import patch, MagicMock
-from src.python_confidence_metric.trust_score_calculator import TrustScoreAnalyzer
-from src.python_confidence_metric.area_analyzer import AreaAnalyzer, _initialize_columns, _get_threshold_values
+from src.osw_confidence_metric.trust_score_calculator import TrustScoreAnalyzer
+from src.osw_confidence_metric.area_analyzer import AreaAnalyzer, _initialize_columns, _get_threshold_values
 
 sample_data = {'geometry': [Point(0, 0), Point(1, 1), Point(2, 2)]}
 sample_gdf = gpd.GeoDataFrame(sample_data)
@@ -117,9 +117,9 @@ class TestAreaAnalyzer(unittest.TestCase):
 
     @patch.object(AreaAnalyzer, '_process_feature', return_value=MagicMock())
     @patch.object(AreaAnalyzer, '_create_tiling_if_needed', return_value=MagicMock())
-    @patch('src.python_confidence_metric.area_analyzer._initialize_columns', return_value=MagicMock())
+    @patch('src.osw_confidence_metric.area_analyzer._initialize_columns', return_value=MagicMock())
     @patch('dask_geopandas.from_geopandas', return_value=MagicMock())
-    @patch('src.python_confidence_metric.area_analyzer._get_threshold_values', return_value=MagicMock())
+    @patch('src.osw_confidence_metric.area_analyzer._get_threshold_values', return_value=MagicMock())
     def test_calculate_area_confidence_score(self, mock_get_threshold_values, mock_from_geopandas,
                                              mock_initialize_columns, mock_create_tiling_if_needed,
                                              mock_process_feature):
