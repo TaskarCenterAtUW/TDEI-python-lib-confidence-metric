@@ -1,11 +1,12 @@
 # example.py
 import time
-
+import osw_confidence_metric
 from osw_confidence_metric.osm_data_handler import OSMDataHandler
 from osw_confidence_metric.area_analyzer import AreaAnalyzer
 username = ''
 password = ''
 
+print(osw_confidence_metric.__version__)
 
 if __name__ == '__main__':
     start_time = time.time()
