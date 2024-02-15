@@ -57,10 +57,11 @@ def calculate_indirect_trust_components_from_polygon(polygon, proj, date, osm_da
     Returns:
         dict: A dictionary containing calculated components for indirect trust score.
     """
-
+    print('9')
     gdf_pois = extract_features_from_polygon(polygon=polygon, tags={'amenity': True}, proj=proj)
     gdf_bldgs = extract_features_from_polygon(polygon=polygon, tags={'building': True}, proj=proj)
     gdf_roads = extract_road_features_from_polygon(polygon=polygon, proj=proj)
+    print('10')
 
     # Initialize values dict with counts
     values_dict = {
@@ -100,7 +101,10 @@ def extract_features_from_polygon(polygon, tags, proj):
     """
     try:
         gdf_features = ox.features.features_from_polygon(polygon, tags=tags).to_crs(proj)
+        print(gdf_features)
+        print('^^^^^^^^^^')
     except ValueError:
+        print('<><><<><><>')
         gdf_features = gpd.GeoDataFrame(columns=list(tags.keys()) + ['geometry'], geometry='geometry')
     return gdf_features
 
@@ -136,7 +140,7 @@ def aggregate_feature_statistics(gdf, date, osm_data_handler):
     """
     user_counts = []
     days_since_last_edits = []
-
+    print('11')
     for row in gdf.itertuples(index=False):
         historical_information = osm_data_handler.get_item_history(item=row)
         if historical_information:

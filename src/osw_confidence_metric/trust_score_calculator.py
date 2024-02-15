@@ -4,6 +4,7 @@ import osmnx as ox
 import pandas as pd
 import dask_geopandas
 import geonetworkx as gnx
+import os
 
 from .utils import calculate_direct_confirmations, count_tag_changes, check_for_rollbacks, \
     calculate_user_interaction_stats, count_tags, calculate_feature_trust_scores, \
@@ -27,8 +28,10 @@ def _calculate_comprehensive_trust_scores(gdf):
     numeric_columns = ['versions', 'direct_confirmations', 'tags', 'user_count', 'days_since_last_edit']
     for col in numeric_columns:
         gdf[col] = pd.to_numeric(gdf[col], errors='coerce')
-
-    gdf_dask = dask_geopandas.from_geopandas(gdf, npartitions=30)
+    max_thread_count = os.cpu_count()/2
+    print('6')
+    gdf_dask = dask_geopandas.from_geopandas(gdf, npartitions=int(max_thread_count))
+    # gdf_dask = dask_geopandas.from_geopandas(gdf, npartitions=30)
 
     # Calculate thresholds for trust score calculation
     versions_threshold = gdf_dask['versions'].mean()
@@ -50,6 +53,7 @@ def _calculate_comprehensive_trust_scores(gdf):
         ('rollbacks', 'object'), ('tags', 'object'), ('user_count', 'object'),
         ('days_since_last_edit', 'object'), ('direct_trust_score', 'object'), ('time_trust_score', 'object')
     ]
+    print('7')
     output = gdf_dask.apply(
         calculate_feature_trust_scores,
         args=(
@@ -64,7 +68,7 @@ def _calculate_comprehensive_trust_scores(gdf):
         axis=1,
         meta=meta
     ).compute(scheduler='multiprocessing')
-
+    print('8')
     return output['direct_trust_score'].mean(), output['time_trust_score'].mean()
 
 
@@ -105,6 +109,7 @@ class TrustScoreAnalyzer:
             dict: A dictionary containing direct trust score, time trust score, and indirect values.
         """
         try:
+            print('Fetching graph')
             graph = ox.graph.graph_from_polygon(
                 polygon,
                 custom_filter=self.SIDEWALK,
@@ -134,11 +139,13 @@ class TrustScoreAnalyzer:
         }
 
     def _analyze_sidewalk_features(self, graph):
+        print('1')
         gdf = gnx.graph_edges_to_gdf(graph)
+        print('2')
         gdf = _initialize_gdf_columns(gdf=gdf)
-
+        print('3')
         df_dask = _prepare_dask_dataframe(gdf=gdf)
-
+        print('4')
         # Apply _compute_edge_statistics function to each row
         output = df_dask.apply(
             self._compute_edge_statistics,
@@ -150,7 +157,7 @@ class TrustScoreAnalyzer:
                 ('days_since_last_edit', 'object')
             ]
         ).compute(scheduler='multiprocessing')
-
+        print('5')
         return _calculate_comprehensive_trust_scores(gdf=output)
 
     def _compute_edge_statistics(self, feature):

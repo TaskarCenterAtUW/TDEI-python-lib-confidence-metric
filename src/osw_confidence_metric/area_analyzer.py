@@ -11,7 +11,7 @@ from .osm_data_handler import OSMDataHandler
 from shapely.geometry import Polygon, MultiPolygon
 from .trust_score_calculator import TrustScoreAnalyzer
 from .utils import compute_feature_indirect_trust, calculate_overall_trust_score
-
+import os
 
 def _get_threshold_values(gdf):
     gdf2 = pd.json_normalize(gdf['indirect_values'])
@@ -49,8 +49,11 @@ class AreaAnalyzer:
         self.gdf = None
 
     def calculate_area_confidence_score(self, file_path):
+        print('Calculating score')
+        print(ox.settings)
         # Read the GeoDataFrame from the file
         self.gdf = gpd.read_file(file_path)
+        print('Read the file')
 
         # Check if tiling is needed and create tiling if necessary
         self._create_tiling_if_needed()
@@ -59,7 +62,12 @@ class AreaAnalyzer:
         self.gdf = _initialize_columns(gdf=self.gdf)
 
         # Convert to Dask GeoDataFrame
-        df_dask = dask_geopandas.from_geopandas(self.gdf, npartitions=16, name='measures')
+        max_thread_count: int = os.cpu_count()/2
+        print("Max thread count")
+        print(int(max_thread_count))
+        df_dask = dask_geopandas.from_geopandas(self.gdf, npartitions=int(max_thread_count), name='measures')
+        # df_dask = dask_geopandas.from_geopandas(self.gdf, npartitions=16, name='measures')
+        
 
         # Apply processing to each feature
         output = df_dask.apply(
