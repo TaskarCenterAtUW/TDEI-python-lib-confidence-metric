@@ -20,7 +20,7 @@ if __name__ == '__main__':
     start = time.time()
     # your code here    
 
-    score = area_analyzer.calculate_area_confidence_score(file_path="./src/assets/caphill_mini.geojson")
+    score = area_analyzer.calculate_area_confidence_score(file_path="./src/assets/seattle_area.geojson")
     print(score)
    
     # Have three threads
