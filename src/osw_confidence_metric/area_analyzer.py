@@ -1,5 +1,6 @@
 # area_analyzer.py file
-
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 import osmnx as ox
 import pandas as pd
 import dask_geopandas
