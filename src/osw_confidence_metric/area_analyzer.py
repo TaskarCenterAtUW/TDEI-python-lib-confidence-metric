@@ -99,15 +99,11 @@ class AreaAnalyzer:
             gdf_roads_simplified = ox.graph.graph_from_polygon(
                 self.gdf.geometry.loc[0], network_type='drive', simplify=True, retain_all=True
             )
-            
-            print((gdf_roads_simplified))
             try:
                 self.gdf = self._create_voronoi_diagram(gdf_edges=gdf_roads_simplified, bounds=self.gdf.geometry.loc[0])
             except Exception as e:
-                print(e)
-                print("Can't create voronoi diagram.")
+                print("Error while creating voronoi diagram in confidence lib: ",e)
                 self.gdf = None
-                # exit(1)
 
     def _create_voronoi_diagram(self, gdf_edges, bounds):
         """
