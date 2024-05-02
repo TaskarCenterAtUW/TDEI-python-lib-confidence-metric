@@ -45,7 +45,7 @@ folder.
 
 - To execute the tests, please follow the commands:
 
-  `pip install -r requirements.txt`
+  `pip install -r requirement.txt`
 
   `python -m unittest discover -v tests/unit_tests`
 
