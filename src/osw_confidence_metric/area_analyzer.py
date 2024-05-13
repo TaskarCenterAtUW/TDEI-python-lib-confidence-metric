@@ -96,13 +96,13 @@ class AreaAnalyzer:
 
     def _create_tiling_if_needed(self):
         if len(self.gdf.index) == 1:
-            gdf_roads_simplified = ox.graph.graph_from_polygon(
-                self.gdf.geometry.loc[0], network_type='drive', simplify=True, retain_all=True
-            )
             try:
+                gdf_roads_simplified = ox.graph.graph_from_polygon(
+                    self.gdf.geometry.loc[0], network_type='drive', simplify=True, retain_all=True
+                )
                 self.gdf = self._create_voronoi_diagram(gdf_edges=gdf_roads_simplified, bounds=self.gdf.geometry.loc[0])
             except Exception as e:
-                print("Error while creating voronoi diagram in confidence lib: ",e)
+                print("No voronoi diagram created in confidence lib: ",e)
                 self.gdf = None
 
     def _create_voronoi_diagram(self, gdf_edges, bounds):
