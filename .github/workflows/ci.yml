@@ -28,7 +28,7 @@
     
           - name: Install dependencies
             run: |
-              pip install -r requirement.txt
+              pip install -r requirement.txt --no-cache-dir
     
           - name: Run unit tests
             run: |
