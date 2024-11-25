@@ -1,5 +1,5 @@
 osmapi==4.0.0
-geopandas==0.14.3
+geopandas==0.14.4
 osmnx==1.8.0
 dask-geopandas==0.3.1
 geonetworkx==0.5.3
