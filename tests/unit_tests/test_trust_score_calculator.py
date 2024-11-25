@@ -2,9 +2,10 @@ import unittest
 import networkx as nx
 import geopandas as gpd
 from datetime import datetime
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, MagicMock
 from shapely.geometry import Polygon, LineString
-from src.osw_confidence_metric.trust_score_calculator import TrustScoreAnalyzer
+from src.osw_confidence_metric.trust_score_calculator import TrustScoreAnalyzer, _prepare_dask_dataframe, \
+    _calculate_comprehensive_trust_scores
 
 
 class MockOSMDataHandler:
@@ -253,6 +254,91 @@ class TestTrustScoreAnalyzer(unittest.TestCase):
         historical_info = {}
         result = self.trust_score_analyzer._filter_historical_data_by_date(historical_info)
         self.assertEqual(result, {})
+
+    @patch('dask_geopandas.from_geopandas')
+    def test_prepare_dask_dataframe(self, mock_from_geopandas):
+        # Create a sample GeoDataFrame with all required columns
+        sample_gdf = gpd.GeoDataFrame({
+            'geometry': [LineString([(0, 0), (1, 1)])],
+            'u': [1], 'v': [2], 'osmid': [12345],
+            'versions': [None], 'direct_confirmations': [None],
+            'changes_to_tags': [None], 'rollbacks': [None],
+            'tags': [None], 'user_count': [None], 'days_since_last_edit': [None]
+        })
+
+        # Mock the Dask GeoDataFrame
+        mock_dask_gdf = MagicMock()
+        mock_dask_gdf.columns = sample_gdf.columns  # Simulate columns attribute
+        mock_dask_gdf.__getitem__.side_effect = lambda key: sample_gdf[key]  # Mock subscripting
+        mock_from_geopandas.return_value = mock_dask_gdf
+
+        # Call the function under test
+        result = _prepare_dask_dataframe(sample_gdf)
+
+        # Assertions
+        mock_from_geopandas.assert_called_once_with(sample_gdf, npartitions=30)
+        self.assertTrue('u' in result.columns and 'v' in result.columns)
+        self.assertTrue(all(col in result.columns for col in [
+            'versions', 'direct_confirmations', 'changes_to_tags',
+            'rollbacks', 'tags', 'user_count', 'days_since_last_edit'
+        ]))
+
+    def test_calculate_comprehensive_trust_scores_empty_gdf(self):
+        empty_gdf = gpd.GeoDataFrame(
+            columns=['geometry', 'versions', 'direct_confirmations', 'tags', 'user_count', 'days_since_last_edit'])
+        direct_trust, time_trust = _calculate_comprehensive_trust_scores(empty_gdf)
+        self.assertEqual(direct_trust, 0)
+        self.assertEqual(time_trust, 0)
+
+
+    @patch('src.osw_confidence_metric.trust_score_calculator.TrustScoreAnalyzer._filter_historical_data_by_date',
+           return_value={'dummy_edge': {'user': 'test_user', 'timestamp': datetime(2024, 1, 1)}})
+    def test_compute_edge_statistics_no_data(self, mock_filter_historical_data):
+        # Mock historical data to trigger calculate_direct_confirmations
+        mock_filter_historical_data.return_value = {
+            'dummy_edge': {
+                'user': 'test_user',
+                'timestamp': datetime(2024, 1, 1),
+                'direct_confirmation': 1,
+                'change_to_tag': 1,
+                'rollback': 0,
+                'version': 1,
+                'tag': {'key': 'value'}
+            }
+        }
+
+        # Mock the feature to behave like an object with attributes
+        sample_feature = MagicMock()
+        sample_feature.osmid = 12345
+        sample_feature.geometry = LineString([(0, 0), (1, 1)])
+
+        # Call the method under test
+        result = self.trust_score_analyzer._compute_edge_statistics(sample_feature)
+
+        # Assertions
+        mock_filter_historical_data.assert_called_once()
+
+        # Verify that the result has None values due to minimal historical data
+        self.assertEqual(result.version, 1)
+        self.assertEqual(result.direct_confirmations, 0)
+        self.assertEqual(result.changes_to_tags, 0)
+        self.assertEqual(result.rollbacks, False)
+        self.assertEqual(result.user_count, 1)
+        self.assertEqual(result.days_since_last_edit, 15)
+        self.assertEqual(result.tags, 0)
+
+    def test_filter_historical_data_by_date_mixed(self):
+        historical_info = {
+            'data1': {'timestamp': datetime(2024, 1, 15)},
+            'data2': {'timestamp': datetime(2024, 1, 17)},
+            'data3': {'timestamp': datetime(2024, 1, 14)}
+        }
+        result = self.trust_score_analyzer._filter_historical_data_by_date(historical_info)
+        expected_result = {
+            'data1': {'timestamp': datetime(2024, 1, 15)},
+            'data3': {'timestamp': datetime(2024, 1, 14)}
+        }
+        self.assertEqual(result, expected_result)
 
 
 if __name__ == '__main__':
