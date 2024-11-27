@@ -51,7 +51,7 @@ folder.
 
 - To execute the code coverage, please follow the commands:
 
-  `python -m coverage run --source=src -m unittest discover -s tests/unit_tests`
+  `python -m coverage run --source=src/osw_confidence_metric -m unittest discover -s tests/unit_tests`
 
   `coverage html` // Can be run after 1st command
 
